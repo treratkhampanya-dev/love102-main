@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My love 💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #ffe9e6;
+    --bg2: #ffc7d1;
+    --line: #c2334d;
+    --paper: #fff3e6;
+    --ink: #4a2c2c;
+    --accent: #d6336c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Mali", "Segoe UI", sans-serif;
+    background: radial-gradient(circle at center, var(--bg1) 0%, var(--bg2) 100%);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .heart {
+    position: fixed; top: -50px; pointer-events: none; z-index: 0;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  .container { position: relative; z-index: 2; text-align: center; padding: 0 12px; }
+  .title { color: var(--accent); font-size: 26px; margin-bottom: 20px; text-shadow: 0 2px 5px #fff; }
+  .subtitle { color: #c44d78; margin-top: 26px; font-size: 15px; }
+
+  /* envelope */
+  .envelope {
+    position: relative; width: 320px; height: 210px;
+    margin: 90px auto 0; cursor: pointer; perspective: 1000px;
+    animation: sway 4s ease-in-out infinite;
+    filter: drop-shadow(0 12px 18px rgba(194, 51, 77, .25));
+  }
+  @keyframes sway {
+    0%, 100% { transform: translateY(0) rotate(-2.5deg); }
+    50% { transform: translateY(-12px) rotate(2.5deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .envelope { animation: none; }
+  }
+  .envelope svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .env-back, .env-front { position: absolute; inset: 0; }
+  .env-back { z-index: 1; }
+  .env-front { z-index: 3; }
+
+  .flap {
+    position: absolute; top: 0; left: 0; width: 320px; height: 115px;
+    transform-origin: top; z-index: 4;
+    transition: transform .8s ease, z-index 0s .4s;
+  }
+  .envelope.open .flap { transform: rotateX(180deg); z-index: 1; }
+
+  /* letter */
+  .letter {
+    position: absolute; left: 50%; bottom: 12px;
+    width: 280px; height: 170px;
+    background: var(--paper); border-radius: 6px;
+    padding: 22px 26px; text-align: left; color: var(--ink);
+    transform: translateX(-50%); transform-origin: center;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
+    overflow: hidden; z-index: 2;
+    transition: transform 1s ease, height 1s ease, width 1s ease, bottom 1s ease;
+  }
+  .letter p { font-size: 13px; line-height: 1.75; margin-bottom: 12px; opacity: 0; transition: opacity .6s ease; }
+  .letter .to { font-weight: 600; }
+  .letter .from { margin-top: 18px; }
+  .envelope.show-letter .letter {
+    width: min(88vw, 520px); height: 330px; bottom: -30px;
+    transform: translateX(-50%) translateY(-10px) rotate(-5deg);
+    z-index: 5; transition-delay: .2s;
+  }
+  .envelope.show-letter .letter p { opacity: 1; transition-delay: .7s; font-size: 14px; }
+
+  .seal {
+    position: absolute; top: 82px; left: 50%; transform: translateX(-50%);
+    width: 42px; height: 42px; background: #e6396f; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    color: #fff; font-size: 22px; z-index: 6; transition: opacity .4s;
+  }
+  .envelope.open .seal { opacity: 0; pointer-events: none; }
+
+  /* polaroid pile */
+  .polaroids {
+    position: absolute; left: 50%; bottom: 12px; width: 210px; height: 252px;
+    transform: translateX(-50%); opacity: 0; pointer-events: none; z-index: 2;
+    transition: transform 1s ease, opacity .5s ease, bottom 1s ease;
+    user-select: none; -webkit-user-select: none; touch-action: manipulation;
+  }
+  .envelope.open:not(.show-letter) .polaroids {
+    opacity: 1; pointer-events: auto; z-index: 5; bottom: 0;
+    transform: translateX(-50%) translateY(-8px); transition-delay: .3s;
+  }
+  .envelope.show-letter .polaroids { opacity: 0; pointer-events: none; z-index: 5; }
+  .polaroid {
+    position: absolute; inset: 0; padding: 12px 12px 0;
+    background: #fffdf8; border-radius: 3px; cursor: pointer;
+    box-shadow: 0 8px 20px rgba(120, 40, 60, .28);
+    transform: rotate(var(--r, 0deg));
+    transition: transform .7s cubic-bezier(.2, .8, .2, 1), opacity .6s ease;
+  }
+  .polaroid .pic {
+    position: relative; width: 186px; height: 186px; overflow: hidden;
+    background: linear-gradient(135deg, #ffc7d1, #ff9fb7);
+    display: flex; align-items: center; justify-content: center;
+    padding: 10px; color: #fff; font-size: 12px; text-align: center; line-height: 1.5;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06);
+  }
+  .polaroid .pic img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; pointer-events: none; -webkit-user-drag: none;
+  }
+  .polaroid .cap {
+    height: 54px; display: flex; align-items: center; justify-content: center;
+    padding: 0 8px; text-align: center; font-size: 15px; color: #6b3a46;
+  }
+  .polaroid.gone-l { transform: translateX(-160%) rotate(-28deg); opacity: 0; pointer-events: none; }
+  .polaroid.gone-r { transform: translateX(160%) rotate(28deg); opacity: 0; pointer-events: none; }
+
+  /* music bar */
+  .music-bar {
+    display: flex; align-items: center; gap: 10px;
+    margin: 16px auto 0; width: 300px; max-width: 100%; padding: 8px 12px;
+    background: #ffe3ea; border-radius: 999px;
+    box-shadow: 0 5px 15px rgba(230, 57, 111, .2);
+  }
+  .music-btn {
+    flex: none; width: 30px; height: 30px; border: none; border-radius: 50%;
+    background: #e6396f; color: #fff; font-size: 11px; cursor: pointer; transition: .3s;
+  }
+  .music-btn:hover { background: #c9184a; transform: scale(1.1); }
+  .music-label { font-size: 14px; }
+  .music-bar.playing .music-label { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 50% { transform: scale(1.25); } }
+  .music-track { flex: 1; height: 6px; background: #f6b8c7; border-radius: 3px; cursor: pointer; }
+  .music-fill { height: 100%; width: 0; background: #e6396f; border-radius: 3px; }
+  .music-time { flex: none; min-width: 34px; text-align: right; font-size: 11px; color: #c44d78; }
+
+  @media (max-width: 480px) {
+    .title { font-size: 21px; }
+    .envelope.show-letter .letter { height: 380px; padding: 20px 18px; }
+    .envelope.show-letter .letter p { font-size: 12.5px; line-height: 1.7; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">💕 A Special Letter For You 💕</h1>
+
+    <div class="envelope" id="envelope">
+      <div class="env-back">
+        <svg viewBox="0 0 320 210"><rect x="2" y="2" width="316" height="206" rx="4" fill="#f7a1b1" stroke="#c2334d" stroke-width="4"/></svg>
+      </div>
+
+      <div class="letter">
+        <p class="to">Dear พิง,</p>
+        <p>ช่วงแรกที่รู้จักกันเค้าแอบไปส่องอจ.หลายรอบมากเพราะเทอน่ารักดี พอเราได้รู้จักกันมากขึ้นเค้ารู้สึกว่าเรามีอะไรที่ชอบคล้ายๆกันเยอะจนได้เจอกันเค้ารู้สึกว่าชอบเทอมากกว่าเดิมและพอได้ใช้เวลากับเทอไปเลื่อยๆ</p>
+        <p>ไม่ว่าจะตอนไปกินข้าวด้วยกัน ไปดูคอนเสิร์ต หรือไปดูหนัง เค้าสนุกมากและแฮปปี้ทุกครั้งเลย เทอมาเติมสีสันให้กับเค้า ชอบเทอนะอ้วนและเค้าอยากรู้จักเทอมากขึ้นนะ "เป็นแฟนกันไหม 💕"</p>
+        <p class="from">*ปล ตอบด้วยนะจ๊ะห้ามเงียบ</p>
+      </div>
+
+      <!-- โพลารอยด์ 5 ใบ: แตะหรือปัดเพื่อดูใบถัดไป -->
+      <div class="polaroids" id="polaroids"></div>
+
+      <div class="env-front">
+        <svg viewBox="0 0 320 210"><path d="M2 2 L160 112 L318 2 L318 208 L2 208 Z" fill="#fbb9c6" stroke="#c2334d" stroke-width="4" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="flap">
+        <svg viewBox="0 0 320 115"><path d="M2 2 L160 113 L318 2 Z" fill="#f7a1b1" stroke="#c2334d" stroke-width="4" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="seal">♥</div>
+    </div>
+
+    <p class="subtitle" id="subtitle">Click the envelope to open 💌</p>
+
+    <div class="music-bar" id="musicBar">
+      <button class="music-btn" id="musicBtn" aria-label="Play or pause music">▶</button>
+      <span class="music-label">🎶</span>
+      <div class="music-track" id="musicTrack"><div class="music-fill" id="musicFill"></div></div>
+      <span class="music-time" id="musicTime">0:00</span>
+    </div>
+  </div>
+
+<script>
+  const envelope = document.getElementById("envelope");
+  const musicBtn = document.getElementById("musicBtn");
+  const musicBar = document.getElementById("musicBar");
+  const musicTrack = document.getElementById("musicTrack");
+  const musicFill = document.getElementById("musicFill");
+  const musicTime = document.getElementById("musicTime");
+  const subtitle = document.getElementById("subtitle");
+
+  // ===== เพลง: วางไฟล์ music.mp3 ไว้โฟลเดอร์เดียวกับไฟล์ HTML นี้ =====
+  const audio = new Audio("music.mp3");
+  audio.loop = true;
+  audio.preload = "auto";
+
+  function fmt(s) {
+    s = Math.max(0, Math.floor(s || 0));
+    return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+  }
+  function updateMusicBtn() {
+    const playing = !audio.paused;
+    musicBtn.textContent = playing ? "❚❚" : "▶";
+    musicBar.classList.toggle("playing", playing);
+  }
+  function updateProgress() {
+    musicTime.textContent = fmt(audio.currentTime);
+    musicFill.style.width = audio.duration
+      ? Math.min(100, (audio.currentTime / audio.duration) * 100) + "%"
+      : "0%";
+  }
+
+  audio.addEventListener("play", updateMusicBtn);
+  audio.addEventListener("pause", updateMusicBtn);
+  audio.addEventListener("timeupdate", updateProgress);
+  audio.addEventListener("error", () => {
+    console.warn("โหลดไฟล์เพลงไม่สำเร็จ: เช็กว่ามีไฟล์ music.mp3 อยู่โฟลเดอร์เดียวกับไฟล์ HTML");
+  });
+
+  musicBtn.addEventListener("click", () => {
+    if (audio.paused) audio.play().catch(() => {}); else audio.pause();
+  });
+  musicTrack.addEventListener("click", (e) => {
+    if (!audio.duration) return;
+    const r = musicTrack.getBoundingClientRect();
+    audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+    updateProgress();
+  });
+  // กดบนแถบเพลงแล้วไม่ให้ซองเปิด/ปิด
+  musicBar.addEventListener("click", (e) => e.stopPropagation());
+
+  // พยายามเล่นทันทีที่เข้าหน้า ถ้าเบราว์เซอร์บล็อก จะเริ่มเล่นเมื่อผู้ใช้คลิก/แตะครั้งแรก
+  const unlockEvents = ["pointerdown", "keydown", "touchstart"];
+  function startOnFirstTouch(e) {
+    // ถ้าผู้ใช้กดปุ่มเพลงเอง ให้ปุ่มจัดการเอง
+    if (e && e.target && e.target.closest && e.target.closest("#musicBtn")) return;
+    audio.play().then(() => {
+      unlockEvents.forEach((ev) => window.removeEventListener(ev, startOnFirstTouch));
+    }).catch(() => {});
+  }
+  audio.play().catch(() => {
+    unlockEvents.forEach((ev) => window.addEventListener(ev, startOnFirstTouch));
+  });
+
+  // ===== ซองจดหมาย + โพลารอยด์ 5 ใบ =====
+  // วางรูป 5 รูปไว้โฟลเดอร์เดียวกับไฟล์ HTML นี้ แล้วแก้ชื่อไฟล์/ข้อความใต้รูปได้ตรงนี้
+  const PHOTOS = [
+    { src: "photo1.jpg", caption: "เจอกันครั้งแรก 🫣" },
+    { src: "photo3.jpg", caption: "ไปคอนเสิร์ตด้วยกัน 🎶" },
+    { src: "photo10.jpg", caption: "น่ารักดีขอยืมนะ ❤️" },
+    { src: "photo2.jpg", caption: "ฝนตกเปียกด้วยกัน 🌧️" },
+    { src: "photo4.jpg", caption: "รอของกินวิธีเด็กอ้วน 🍽️" },
+    { src: "photo6.jpg", caption: "รอตี๋น้อยนานโพด 🤧" },
+    { src: "photo7.jpg", caption: "แอบถ่ายจ้าา 🤗" },
+    { src: "photo8.jpg", caption: "แย่จังมือโดนกล้อง 😝" },
+    { src: "photo9.jpg", caption: "ส่งมาซื้อของ 🛵" },
+    { src: "photo11.jpg", caption: "แอบถ่ายจ้าา 🥰" },
+    { src: "photo5.jpg", caption: "ราเมงกลิ่นหอมมาก 🍜" }
+  ];
+  const TILTS = [-3, 4, -5, 2, -2 , 6 ,-3 , 4 ,-5 , 2 ,-2 ]; // องศาเอียงของแต่ละใบ ให้ดูเหมือนกองกระดาษ
+
+  const pile = document.getElementById("polaroids");
+  const cards = [];
+  const goneDir = [];
+  let current = 0;
+  let stage = "closed"; // closed | photos | letter
+
+  PHOTOS.forEach((p, i) => {
+    const card = document.createElement("div");
+    card.className = "polaroid";
+    card.style.setProperty("--r", TILTS[i % TILTS.length] + "deg");
+
+    const pic = document.createElement("div");
+    pic.className = "pic";
+    pic.textContent = "ใส่รูปชื่อ " + p.src;
+    const img = document.createElement("img");
+    img.src = p.src;
+    img.alt = p.caption || "";
+    img.draggable = false;
+    img.onerror = () => img.remove(); // ไม่มีไฟล์รูปจะเห็นกรอบสีชมพูพร้อมชื่อไฟล์
+    img.onload = () => { pic.firstChild.textContent = ""; };
+    pic.appendChild(img);
+
+    const cap = document.createElement("div");
+    cap.className = "cap";
+    cap.textContent = p.caption || "";
+
+    card.appendChild(pic);
+    card.appendChild(cap);
+    pile.appendChild(card);
+    cards.push(card);
+  });
+
+  function layoutPile() {
+    cards.forEach((c, i) => {
+      c.classList.remove("gone-l", "gone-r");
+      if (i < current) {
+        c.classList.add(goneDir[i] === "l" ? "gone-l" : "gone-r");
+        c.style.zIndex = 20;
+      } else {
+        c.style.zIndex = 10 - (i - current);
+      }
+    });
+    if (stage === "photos") {
+      subtitle.textContent = current < PHOTOS.length - 1
+        ? "tab to view next 📸 (" + (current + 1) + "/" + PHOTOS.length + ")"
+        : "touch last picture to view massage  💌 (" + PHOTOS.length + "/" + PHOTOS.length + ")";
+    }
+  }
+
+  function showLetter() {
+    stage = "letter";
+    envelope.classList.add("show-letter");
+    subtitle.textContent = "A little message for you 💗";
+  }
+  function flick(dir) {
+    if (stage !== "photos") return;
+    goneDir[current] = dir;
+    current++;
+    if (current >= PHOTOS.length) {
+      stage = "wait";
+      layoutPile();
+      setTimeout(showLetter, 550); // รอให้ใบสุดท้ายปลิวออกก่อน แล้วจดหมายค่อยเลื่อนออกมา
+    } else {
+      layoutPile();
+    }
+  }
+
+  function openEnvelope() {
+    stage = "photos";
+    current = 0;
+    envelope.classList.add("open");
+    layoutPile();
+  }
+  function closeEnvelope() {
+    stage = "closed";
+    envelope.classList.remove("open", "show-letter");
+    subtitle.textContent = "Click the envelope to open 💌";
+    setTimeout(() => { if (stage === "closed") { current = 0; layoutPile(); } }, 900);
+  }
+  envelope.addEventListener("click", () => {
+    if (stage === "closed") openEnvelope();
+    else if (stage === "letter") closeEnvelope();
+  });
+
+  // แตะ = ใบถัดไป (สลับปลิวซ้าย/ขวา), ปัดซ้าย/ขวา = ปลิวไปทางนั้น
+  let startX = null;
+  pile.addEventListener("click", (e) => e.stopPropagation()); // ไม่ให้การแตะรูปไปปิดซอง
+  pile.addEventListener("pointerdown", (e) => { startX = e.clientX; });
+  pile.addEventListener("pointercancel", () => { startX = null; });
+  pile.addEventListener("pointerup", (e) => {
+    if (startX === null) return;
+    const dx = e.clientX - startX;
+    startX = null;
+    if (dx < -40) flick("l");
+    else if (dx > 40) flick("r");
+    else flick(current % 2 === 0 ? "r" : "l");
+  });
+  window.addEventListener("keydown", (e) => {
+    if (stage !== "photos") return;
+    if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") flick("r");
+    else if (e.key === "ArrowLeft") flick("l");
+  });
+
+  // ===== หัวใจร่วง =====
+  const hearts = ["❤️", "💗", "💕", "💖", "💘"];
+  function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = Math.random() * 20 + 10 + "px";
+    heart.style.animationDuration = Math.random() * 4 + 3 + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 7000);
+  }
+  setInterval(createHeart, 300);
+</script>
+</body>
+</html>
